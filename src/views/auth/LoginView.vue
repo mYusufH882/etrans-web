@@ -10,29 +10,26 @@
                   <div class="app-brand justify-content-center">
                     <h1>Login</h1>
                   </div>
-                  <h4 class="mb-1">Welcome to TodoList Yusuf ! 👋</h4>
-                  <p class="mb-6">
-                    The greatest app for make better todo activities and increase your productivity
-                    !!!
-                  </p>
-                  <form @submit.prevent="handleSubmit">
+                  <h4 class="mb-1">Welcome to E-Trans ! 👋</h4>
+                  <p class="mb-6">The greatest app for manage your transactions !!!</p>
+                  <form @submit.prevent="handleLogin">
                     <div class="mb-3">
-                      <label for="email" class="form-label">Email : </label>
+                      <label for="email" class="form-label">Email :</label>
                       <input
+                        v-model="email"
                         type="email"
                         class="form-control"
                         id="email"
-                        v-model="email"
                         required
                       />
                     </div>
                     <div class="mb-3">
                       <label for="password" class="form-label">Password</label>
                       <input
+                        v-model="password"
                         type="password"
                         class="form-control"
                         id="password"
-                        v-model="password"
                         required
                       />
                     </div>
@@ -51,7 +48,26 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
-  name: 'LoginView'
+  name: 'LoginView',
+  data() {
+    return {
+      email: '',
+      password: ''
+    }
+  },
+  methods: {
+    ...mapActions(['login']),
+    async handleLogin() {
+      try {
+        await this.login({ email: this.email, password: this.password })
+        this.$router.push({ name: 'Dashboard' })
+      } catch (error) {
+        console.error('Login error:', error)
+      }
+    }
+  }
 }
 </script>

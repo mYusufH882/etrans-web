@@ -36,8 +36,8 @@
                     </div>
                   </div>
                   <div class="flex-grow-1">
-                    <h6 class="mb-0">John Doe</h6>
-                    <small class="text-muted">Admin</small>
+                    <h6 class="mb-0" v-if="user">{{ user.email }}</h6>
+                    <small class="text-muted">{{ user.name }}</small>
                   </div>
                 </div>
               </a>
@@ -54,7 +54,7 @@
               <div class="dropdown-divider my-1"></div>
             </li>
             <li>
-              <button class="dropdown-item" @click="signOut">
+              <button class="dropdown-item" @click="handleLogout">
                 <i class="bx bx-power-off bx-md me-3"></i><span>Log Out</span>
               </button>
             </li>
@@ -67,7 +67,20 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
-  name: 'TopBar'
+  name: 'TopBar',
+  computed: {
+    ...mapState({
+      user: (state) => state.auth.user
+    })
+  },
+  methods: {
+    ...mapActions(['logout']),
+    handleLogout() {
+      this.logout() // Panggil metode logout dari store
+    }
+  }
 }
 </script>

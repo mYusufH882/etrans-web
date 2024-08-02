@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-6 col-lg-4"></div>
+  <div class="col-md-12"></div>
 </template>
 
 <script>

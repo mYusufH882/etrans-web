@@ -86,8 +86,8 @@
           <div class="text-truncate" data-i18n="Basic">Master Barang</div>
         </a>
         <ul class="menu-sub">
-          <li class="menu-item">
-            <a href="/" class="menu-link">
+          <li :class="{ 'menu-item': true, active: isActive('create-barang') }">
+            <a href="/create-barang" class="menu-link">
               <div class="text-truncate">Buat Barang</div>
             </a>
           </li>
@@ -134,6 +134,8 @@ export default {
       switch (menu) {
         case 'dashboard':
           return route.path == '/'
+        case 'create-barang':
+          return route.path == '/create-barang'
         case 'barang':
           return route.path == '/barang'
         case 'customer':
@@ -146,7 +148,7 @@ export default {
     const isOpen = (menu) => {
       switch (menu) {
         case 'barang':
-          return route.path == '/barang'
+          return route.path == '/barang' || route.path == '/create-barang'
         case 'customer':
           return route.path == '/customer'
         default:
