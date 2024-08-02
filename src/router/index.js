@@ -60,6 +60,15 @@ const router = createRouter({
           component: () => import('../views/barang/AddBarang.vue')
         },
         {
+          path: '/edit-barang/:id',
+          name: 'EditBarang',
+          meta: {
+            title: 'E-Trans | Edit Barang',
+            requiresAuth: true
+          },
+          component: () => import('../views/barang/EditBarang.vue')
+        },
+        {
           path: '/customer',
           name: 'Customer',
           meta: {

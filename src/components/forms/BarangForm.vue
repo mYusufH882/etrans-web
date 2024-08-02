@@ -29,6 +29,7 @@
                 id="nama"
                 v-model="form.nama"
                 placeholder="Masukkan Nama Barang ..."
+                required
               />
             </div>
           </div>
@@ -39,14 +40,23 @@
                 type="text"
                 class="form-control"
                 id="harga"
-                v-model="form.harga"
+                v-model="formattedHarga"
+                @input="updateHarga"
                 placeholder="Masukkan Harga Barang ..."
+                required
               />
             </div>
           </div>
           <div class="row justify-content-end">
             <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Simpan</button>
+              <button
+                type="submit"
+                class="mx-2 btn"
+                :class="isEdit ? 'btn-warning' : 'btn-primary'"
+              >
+                {{ isEdit ? 'Ubah' : 'Simpan' }}
+              </button>
+              <a href="/barang" class="btn btn-secondary">Kembali</a>
             </div>
           </div>
         </form>
@@ -56,17 +66,37 @@
 </template>
 
 <script>
+import { formatRupiah, parseRupiah } from '@/utils/currency'
+
 export default {
   name: 'BarangForm',
   props: {
     form: {
       type: Object,
       required: true
+    },
+    isEdit: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    formattedHarga: {
+      get() {
+        return formatRupiah(this.form.harga)
+      },
+      set(value) {
+        this.form.harga = parseRupiah(value)
+      }
     }
   },
   methods: {
     submitForm() {
       this.$emit('submit', { ...this.form })
+    },
+    updateHarga(event) {
+      this.form.harga = parseRupiah(event.target.value)
+      event.target.value = formatRupiah(this.form.harga)
     }
   }
 }
