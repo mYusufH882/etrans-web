@@ -5,9 +5,9 @@
         <div class="card">
           <div class="card-header d-flex align-items-center justify-content-between">
             <h5 class="mb-0">Daftar Barang</h5>
-            <button @click="goToCreateBarang" class="btn btn-success">
+            <a href="/create-barang" class="btn btn-success">
               <i class="menu-icon tf-icons bx bx-plus"></i>Tambah
-            </button>
+            </a>
           </div>
           <div class="card-body">
             <table id="barangTable" class="table table-striped">
@@ -121,9 +121,6 @@ export default {
     },
     editBarang(id) {
       this.$router.push({ name: 'EditBarang', params: { id } })
-    },
-    goToCreateBarang() {
-      this.$router.push({ name: 'CreateBarang' })
     }
   }
 }

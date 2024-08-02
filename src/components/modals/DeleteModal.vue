@@ -17,7 +17,7 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">Apakah Anda yakin ingin menghapus barang ini?</div>
+        <div class="modal-body">Apakah Anda yakin ingin menghapus data ini?</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
           <button type="button" class="btn btn-danger" @click="$emit('confirm')">Hapus</button>

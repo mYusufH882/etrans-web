@@ -29,7 +29,7 @@ export default {
     async handleSubmit(barangData) {
       try {
         const response = await apiClient.post('/barang', barangData)
-        console.log('Barang berhasil ditambahkan:', response.data)
+        console.log('Barang berhasil ditambahkan:', response.data.data)
         this.$router.push({ name: 'Barang' })
       } catch (error) {
         console.error('Create Barang Error : ', error)

@@ -76,6 +76,24 @@ const router = createRouter({
             requiresAuth: true
           },
           component: () => import('../views/customer/CustomerList.vue')
+        },
+        {
+          path: '/create-customer',
+          name: 'CreateCustomer',
+          meta: {
+            title: 'E-Trans | Buat Customer',
+            requiresAuth: true
+          },
+          component: () => import('../views/customer/AddCustomer.vue')
+        },
+        {
+          path: '/edit-customer/:id',
+          name: 'EditCustomer',
+          meta: {
+            title: 'E-Trans | Edit Customer',
+            requiresAuth: true
+          },
+          component: () => import('../views/customer/EditCustomer.vue')
         }
       ]
     }
