@@ -105,14 +105,14 @@ export default {
     },
     showDeleteModal(id) {
       this.barangToDelete = id
-      const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'))
+      const deleteModal = new bootstrap.Modal($('#deleteModal'))
       deleteModal.show()
     },
     async confirmDelete() {
       try {
         await apiClient.delete(`/barang/${this.barangToDelete}`)
         this.barangToDelete = null
-        const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'))
+        const deleteModal = bootstrap.Modal.getInstance($('#deleteModal'))
         deleteModal.hide()
         this.fetchBarang()
       } catch (error) {

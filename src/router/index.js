@@ -94,6 +94,24 @@ const router = createRouter({
             requiresAuth: true
           },
           component: () => import('../views/customer/EditCustomer.vue')
+        },
+        {
+          path: '/transaksi',
+          name: 'Transaksi',
+          meta: {
+            title: 'E-Trans | Daftar Transaksi',
+            requiresAuth: true
+          },
+          component: () => import('../views/transaksi/TransaksiList.vue')
+        },
+        {
+          path: '/create-transaksi',
+          name: 'CreateTransaksi',
+          meta: {
+            title: 'E-Trans | Buat Transaksi',
+            requiresAuth: true
+          },
+          component: () => import('../views/transaksi/TransaksiForm.vue')
         }
       ]
     }
