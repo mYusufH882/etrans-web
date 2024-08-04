@@ -17,13 +17,11 @@ const store = createStore({
     },
     setUser(state, user) {
       state.auth.user = user
-      localStorage.setItem('user', JSON.stringify(user))
     },
     logout(state) {
       state.auth.token = ''
       state.auth.user = {}
       localStorage.removeItem('token')
-      localStorage.removeItem('user')
     }
   },
   actions: {

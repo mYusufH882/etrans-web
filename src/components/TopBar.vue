@@ -78,10 +78,7 @@ export default {
   },
   created() {
     if (!this.user.name) {
-      const storedUser = JSON.parse(localStorage.getItem('user'))
-      if (storedUser) {
-        this.$store.commit('setUser', storedUser)
-      }
+      this.$store.dispatch('fetchUser')
     }
   },
   methods: {
