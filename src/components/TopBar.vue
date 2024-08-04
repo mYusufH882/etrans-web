@@ -76,6 +76,14 @@ export default {
       user: (state) => state.auth.user
     })
   },
+  created() {
+    if (!this.user.name) {
+      const storedUser = JSON.parse(localStorage.getItem('user'))
+      if (storedUser) {
+        this.$store.commit('setUser', storedUser)
+      }
+    }
+  },
   methods: {
     ...mapActions(['logout']),
     handleLogout() {
