@@ -12,10 +12,12 @@
           <div class="card-body">
             <table id="customerTable" class="table table-striped">
               <thead>
-                <th>Kode Customer</th>
-                <th>Nama Customer</th>
-                <th>Telepon Customer</th>
-                <th>Aksi</th>
+                <tr>
+                  <th>Kode Customer</th>
+                  <th>Nama Customer</th>
+                  <th>Telepon Customer</th>
+                  <th>Aksi</th>
+                </tr>
               </thead>
               <tbody @editCustomer="editCustomer" @deleteCustomer="deleteCustomer"></tbody>
             </table>
@@ -105,14 +107,14 @@ export default {
     },
     showDeleteModal(id) {
       this.customerToDelete = id
-      const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'))
+      const deleteModal = new bootstrap.Modal($('#deleteModal'))
       deleteModal.show()
     },
     async confirmDelete() {
       try {
         await apiClient.delete(`/customer/${this.customerToDelete}`)
         this.customerToDelete = null
-        const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'))
+        const deleteModal = bootstrap.Modal.getInstance($('#deleteModal'))
         deleteModal.hide()
         this.fetchCustomer()
       } catch (error) {

@@ -118,6 +118,14 @@
           </li>
         </ul>
       </li>
+
+      <!-- Transaksi -->
+      <li :class="{ 'menu-item': true, active: isActive('transaksi') }">
+        <a href="/transaksi" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-store-alt"></i>
+          <div class="text-truncate" data-i18n="Dashboards">Transaksi</div>
+        </a>
+      </li>
     </ul>
   </aside>
 </template>
@@ -142,6 +150,8 @@ export default {
           return route.path == '/customer'
         case 'create-customer':
           return route.path == '/create-customer'
+        case 'transaksi':
+          return route.path == '/transaksi' || route.path == '/create-transaksi'
         default:
           return false
       }
