@@ -76,6 +76,11 @@ export default {
       user: (state) => state.auth.user
     })
   },
+  created() {
+    if (!this.user.name) {
+      this.$store.dispatch('fetchUser')
+    }
+  },
   methods: {
     ...mapActions(['logout']),
     handleLogout() {
