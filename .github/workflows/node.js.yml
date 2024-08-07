@@ -40,5 +40,5 @@ jobs:
             cd /home/yusufprog/apps/etrans-web
             git pull origin master
             git status
-            npm install
-            npm run build
+            docker-compose run --rm apps_npm_1 npm install
+            docker-compose run --rm apps_npm_1 npm run build
