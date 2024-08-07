@@ -43,5 +43,6 @@ jobs:
             git status
             docker-compose run --rm npm npm install
             docker-compose run --rm npm npm run build
+            docker-compose down --volumes --remove-orphans
             docker-compose down 
             docker-compose up -d
