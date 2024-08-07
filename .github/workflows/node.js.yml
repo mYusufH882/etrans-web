@@ -29,3 +29,9 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     # - run: npm test
+    
+    - name: Deploy to VPS
+      run: |
+          echo "$SSH_PRIVATE_KEY" > deploy_key
+          chmod 600 deploy_key
+          ssh -o StrictHostKeyChecking=no -i deploy_key yusufprog@103.174.114.45 'bash -s' < /home/yusufprog/apps/deploy-fe.sh
