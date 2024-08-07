@@ -4,6 +4,7 @@
 name: Vue & Node JS CI
 
 on:
+  workflow_dispatch:
   push:
     branches: ['master']
   pull_request:
