@@ -39,5 +39,5 @@ jobs:
             cd /home/yusufprog/apps/etrans-web
             git pull origin
 
-            docker-compose down --volumes --remove-orphans
+            docker-compose down --volumes
             docker-compose up -d
