@@ -39,5 +39,4 @@ jobs:
             cd /home/yusufprog/apps/etrans-web
             git pull origin
 
-            docker-compose down --volumes
-            docker-compose up -d
+            docker-compose exec apps_npm_1 npm run build
