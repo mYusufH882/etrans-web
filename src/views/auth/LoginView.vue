@@ -10,7 +10,7 @@
                   <div class="app-brand justify-content-center">
                     <h1>Login E-Trans</h1>
                   </div>
-                  <h4 class="mb-1">Welcome to E-Trans ! 👋</h4>
+                  <h4 class="mb-1">Welcome to E-<span class="text-primary">Trans</span> ! 👋</h4>
                   <p class="mb-6">The greatest app for manage your transactions !!!</p>
                   <form @submit.prevent="handleLogin">
                     <div class="mb-3">
