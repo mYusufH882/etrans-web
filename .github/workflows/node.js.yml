@@ -38,5 +38,3 @@ jobs:
           script: |
             cd /home/yusufprog/apps/etrans-web
             git pull origin
-
-            docker-compose up -d
