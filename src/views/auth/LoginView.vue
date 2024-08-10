@@ -8,7 +8,7 @@
               <div class="card px-sm-6 px-0">
                 <div class="card-body">
                   <div class="app-brand justify-content-center">
-                    <h1>Login</h1>
+                    <h1>Login E-Trans</h1>
                   </div>
                   <h4 class="mb-1">Welcome to E-Trans ! 👋</h4>
                   <p class="mb-6">The greatest app for manage your transactions !!!</p>
