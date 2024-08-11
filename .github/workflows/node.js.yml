@@ -41,8 +41,8 @@ jobs:
             cd /home/yusufprog/apps/etrans-web
             git pull origin
 
-            docker-compose exec npm npm install
-            docker-compose exec npm npm run build
+            npm install
+            npm run build
 
             docker network ls | grep -wq apps_default || docker network create apps_default
 
