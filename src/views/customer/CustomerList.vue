@@ -10,17 +10,19 @@
             </a>
           </div>
           <div class="card-body">
-            <table id="customerTable" class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Kode Customer</th>
-                  <th>Nama Customer</th>
-                  <th>Telepon Customer</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody @editCustomer="editCustomer" @deleteCustomer="deleteCustomer"></tbody>
-            </table>
+            <div class="table-responsive">
+              <table id="customerTable" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Kode Customer</th>
+                    <th>Nama Customer</th>
+                    <th>Telepon Customer</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody @editCustomer="editCustomer" @deleteCustomer="deleteCustomer"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

@@ -10,28 +10,30 @@
             </a>
           </div>
           <div class="card-body">
-            <table id="transaksiTable" class="table table-striped">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>No Transaksi</th>
-                  <th>Tanggal</th>
-                  <th>Nama Customer</th>
-                  <th>Jumlah Barang</th>
-                  <th>Sub Total</th>
-                  <th>Diskon</th>
-                  <th>Ongkir</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                  <th colspan="8" class="text-end">Grand Total:</th>
-                  <th id="grandTotalFooter" class="total-column"></th>
-                </tr>
-              </tfoot>
-              <tbody></tbody>
-            </table>
+            <div class="table-responsive">
+              <table id="transaksiTable" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>No Transaksi</th>
+                    <th>Tanggal</th>
+                    <th>Nama Customer</th>
+                    <th>Jumlah Barang</th>
+                    <th>Sub Total</th>
+                    <th>Diskon</th>
+                    <th>Ongkir</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th colspan="8" class="text-end">Grand Total:</th>
+                    <th id="grandTotalFooter" class="total-column"></th>
+                  </tr>
+                </tfoot>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
