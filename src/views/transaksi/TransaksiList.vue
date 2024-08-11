@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="mb-0">Daftar Transaksi</h5>
+            <h5 class="mb-0">Daftar <span class="text-primary">Transaksi</span></h5>
             <a href="/create-transaksi" class="btn btn-success">
               <i class="menu-icon tf-icons bx bx-plus"></i> Tambah
             </a>
