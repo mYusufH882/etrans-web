@@ -10,17 +10,19 @@
             </a>
           </div>
           <div class="card-body">
-            <table id="barangTable" class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Kode Barang</th>
-                  <th>Nama Barang</th>
-                  <th>Harga Barang</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody @editBarang="editBarang" @deleteBarang="deleteBarang"></tbody>
-            </table>
+            <div class="table-responsive">
+              <table id="barangTable" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Kode Barang</th>
+                    <th>Nama Barang</th>
+                    <th>Harga Barang</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody @editBarang="editBarang" @deleteBarang="deleteBarang"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

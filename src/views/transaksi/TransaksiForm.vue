@@ -428,13 +428,13 @@ export default {
   overflow-x: auto;
 }
 .table {
-  min-width: 1200px; /* Adjust as needed */
+  min-width: 1200px;
 }
 .text-end {
   text-align: right;
 }
 .fixed-width {
-  min-width: 150px; /* Adjust the width as needed */
+  min-width: 150px;
 }
 .short-width {
   width: 80px;
