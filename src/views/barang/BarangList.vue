@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="mb-0">Daftar Barang</h5>
+            <h5 class="mb-0">Daftar <span class="text-primary">Barang</span></h5>
             <a href="/create-barang" class="btn btn-success">
               <i class="menu-icon tf-icons bx bx-plus"></i>Tambah
             </a>

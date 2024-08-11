@@ -27,7 +27,7 @@ jobs:
           node-version: 20.x
           cache: 'npm'
       - run: npm ci
-      - run: npm run build --if-present
+      - run: npm run build
       # - run: npm test
 
       - name: Deploy to VPS
@@ -41,8 +41,8 @@ jobs:
             cd /home/yusufprog/apps/etrans-web
             git pull origin
 
-            npm install
-            npm run build
+            docker-compose exec npm npm install
+            docker-compose exec npm npm run build
 
             docker network ls | grep -wq apps_default || docker network create apps_default
 
