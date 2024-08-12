@@ -2,7 +2,7 @@
   <div class="container-xxl flex-grow-1 container-p-y">
     <h5 class="pb-1 mb-6">Edit Customer</h5>
     <div class="row">
-      <CustomerForm :isEdit="true" :form="form" @submit="updateCustomer" />
+      <CustomerForm :isEdit="true" :form="form" @submit="updateCustomer" :errors="errors" />
     </div>
   </div>
 </template>
@@ -22,7 +22,8 @@ export default {
         kode: '',
         name: '',
         telp: ''
-      }
+      },
+      errors: {}
     }
   },
   async mounted() {
@@ -45,7 +46,11 @@ export default {
         await apiClient.put(`/customer/${id}`, this.form)
         this.$router.push({ name: 'Customer' })
       } catch (error) {
-        console.error(error)
+        if (error.response.status == 422) {
+          this.errors = error.response.data.error || {}
+        } else {
+          console.error(error)
+        }
       }
     }
   }

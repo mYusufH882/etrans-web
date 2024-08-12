@@ -16,8 +16,8 @@
                 id="kode"
                 v-model="form.kode"
                 placeholder="Masukkan Kode Customer ..."
-                required
               />
+              <small v-if="errors.kode" class="text-danger">{{ errors.kode[0] }}</small>
             </div>
           </div>
           <div class="row mb-6">
@@ -29,8 +29,8 @@
                 id="name"
                 v-model="form.name"
                 placeholder="Masukkan Nama Customer ..."
-                required
               />
+              <small v-if="errors.name" class="text-danger">{{ errors.name[0] }}</small>
             </div>
           </div>
           <div class="row mb-6">
@@ -43,8 +43,8 @@
                 v-model="formattedTelp"
                 @input="updatePhoneNumber"
                 placeholder="Masukkan Nomor Telepon Customer ..."
-                required
               />
+              <small v-if="errors.telp" class="text-danger">{{ errors.telp[0] }}</small>
             </div>
           </div>
           <div class="row justify-content-end">
@@ -78,6 +78,10 @@ export default {
     isEdit: {
       type: Boolean,
       default: false
+    },
+    errors: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {

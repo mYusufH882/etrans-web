@@ -77,7 +77,7 @@ export default {
     })
   },
   created() {
-    console.log(this.user.name)
+    // console.log(this.user.name)
 
     if (!this.user.name) {
       this.$store.dispatch('fetchUser')

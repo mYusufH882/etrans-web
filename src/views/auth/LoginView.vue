@@ -12,6 +12,11 @@
                   </div>
                   <h4 class="mb-1">Welcome to E-<span class="text-primary">Trans</span> ! 👋</h4>
                   <p class="mb-6">The greatest app for manage your transactions !!!</p>
+
+                  <div v-if="errors.general" class="alert alert-danger">
+                    {{ errors.general }}
+                  </div>
+
                   <form @submit.prevent="handleLogin">
                     <div class="mb-3">
                       <label for="email" class="form-label">Email :</label>
@@ -55,17 +60,27 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      errors: {}
     }
   },
   methods: {
     ...mapActions(['login']),
     async handleLogin() {
       try {
+        this.errors = {}
         await this.login({ email: this.email, password: this.password })
         this.$router.push({ name: 'Dashboard' })
       } catch (error) {
-        console.error('Login error:', error)
+        if (error.isAxiosError) {
+          if (error.response.status === 422) {
+            this.errors = error.response.data.message
+          } else if (error.response.status === 401) {
+            this.errors.general = 'Email atau password tidak valid.'
+          }
+        } else {
+          return
+        }
       }
     }
   }

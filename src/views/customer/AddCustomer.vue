@@ -2,7 +2,7 @@
   <div class="container-xxl flex-grow-1 container-p-y">
     <h5 class="pb-1 mb-6">Customer Form</h5>
     <div class="row">
-      <CustomerForm :form="customer" @submit="handleSubmit" />
+      <CustomerForm :form="customer" @submit="handleSubmit" :errors="errors" />
     </div>
   </div>
 </template>
@@ -22,7 +22,8 @@ export default {
         kode: '',
         name: '',
         telp: ''
-      }
+      },
+      errors: {}
     }
   },
   methods: {
@@ -32,7 +33,11 @@ export default {
         console.log('Barang berhasil ditambahkan:', response.data.data)
         this.$router.push({ name: 'Customer' })
       } catch (error) {
-        console.error('Create Customer Error:', error)
+        if (error.response.status == 422) {
+          this.errors = error.response.data.error || {}
+        } else {
+          console.error('Create Customer Error:', error)
+        }
       }
     }
   }

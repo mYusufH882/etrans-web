@@ -7,7 +7,7 @@
             <h5 class="mb">Edit Barang</h5>
           </div>
           <div class="card-body">
-            <BarangForm :isEdit="true" :form="form" @submit="updateBarang" />
+            <BarangForm :isEdit="true" :form="form" @submit="updateBarang" :errors="errors" />
           </div>
         </div>
       </div>
@@ -30,7 +30,8 @@ export default {
         kode: '',
         nama: '',
         harga: 0
-      }
+      },
+      errors: {}
     }
   },
   async mounted() {
@@ -52,7 +53,11 @@ export default {
         await apiClient.put(`/barang/${id}`, this.form)
         this.$router.push({ name: 'Barang' })
       } catch (error) {
-        console.error(error)
+        if (error.response.status == 422) {
+          this.errors = error.response.data.error || {}
+        } else {
+          console.error(error)
+        }
       }
     }
   }

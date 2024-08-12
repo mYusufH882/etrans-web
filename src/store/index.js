@@ -32,9 +32,14 @@ const store = createStore({
         await dispatch('fetchUser')
       } catch (error) {
         console.error('Error during login:', error)
+        throw error
       }
     },
-    async fetchUser({ commit }) {
+    async fetchUser({ commit, state }) {
+      if (!state.auth.token) {
+        console.warn('No token found!!!')
+      }
+
       try {
         const response = await apiClient.get('/user')
         commit('setUser', response.data)
