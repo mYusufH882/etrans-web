@@ -23,21 +23,27 @@ export default {
         nama: '',
         harga: 0
       },
-      errors: {}
+      errors: {},
+      isSubmitting: false
     }
   },
   methods: {
     async handleSubmit(barangData) {
+      if (this.isSubmitting) return
+      this.isSubmitting = true
+
       try {
         const response = await apiClient.post('/barang', barangData)
         if (response) console.log('Barang berhasil ditambahkan:', response.data.data)
         this.$router.push({ name: 'Barang' })
       } catch (error) {
-        if (error.response.status === 422) {
+        if (error.response.status == 422) {
           this.errors = error.response.data.error || {}
         } else {
           console.error('Error : ', error.response.data.message)
         }
+      } finally {
+        this.isSubmitting = false // Reset flag
       }
     }
   }

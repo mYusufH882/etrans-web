@@ -23,11 +23,15 @@ export default {
         name: '',
         telp: ''
       },
-      errors: {}
+      errors: {},
+      isSubmitting: false
     }
   },
   methods: {
     async handleSubmit(customerData) {
+      if (this.isSubmitting) return
+      this.isSubmitting = true
+
       try {
         const response = await apiClient.post('/customer', customerData)
         console.log('Barang berhasil ditambahkan:', response.data.data)
@@ -38,6 +42,8 @@ export default {
         } else {
           console.error('Create Customer Error:', error)
         }
+      } finally {
+        this.isSubmitting = false
       }
     }
   }

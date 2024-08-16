@@ -95,9 +95,6 @@ export default {
     }
   },
   methods: {
-    updatePhoneNumber() {
-      this.form.telp = parsePhoneNumber(this.form.telp)
-    },
     submitForm() {
       const parsedPhone = parsePhoneNumber(this.form.telp)
       this.$emit('submit', { ...this.form, parsedPhone })

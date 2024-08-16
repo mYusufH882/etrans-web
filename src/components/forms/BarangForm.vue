@@ -41,7 +41,6 @@
                 class="form-control"
                 id="harga"
                 v-model="formattedHarga"
-                @input="updateHarga"
                 placeholder="Masukkan Harga Barang ..."
               />
               <small v-if="errors.harga" class="text-danger">{{ errors.harga[0] }}</small>
@@ -97,10 +96,6 @@ export default {
   methods: {
     submitForm() {
       this.$emit('submit', { ...this.form })
-    },
-    updateHarga(event) {
-      this.form.harga = parseRupiah(event.target.value)
-      event.target.value = formatRupiah(this.form.harga)
     }
   }
 }
