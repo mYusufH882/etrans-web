@@ -23,11 +23,12 @@
                     <th>Diskon</th>
                     <th>Ongkir</th>
                     <th>Total</th>
+                    <th>Aksi</th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
-                    <th colspan="8" class="text-end">Grand Total:</th>
+                    <th colspan="9" class="text-end">Grand Total:</th>
                     <th id="grandTotalFooter" class="total-column"></th>
                   </tr>
                 </tfoot>
@@ -38,6 +39,8 @@
         </div>
       </div>
     </div>
+
+    <DetailModalTrans :selectedTransaction="selectedTransaction" />
   </div>
 </template>
 
@@ -48,12 +51,17 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'
 import apiClient from '@/plugins/axios'
 import { formatRupiah } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
+import DetailModalTrans from '@/components/modals/DetailModalTrans.vue'
 
 export default {
   name: 'TransaksiList',
+  components: {
+    DetailModalTrans
+  },
   data() {
     return {
-      table: null
+      table: null,
+      selectedTransaction: {}
     }
   },
   mounted() {
@@ -70,6 +78,8 @@ export default {
       try {
         const response = await apiClient.get('/transactions')
         const data = response.data.data
+        console.log(data)
+
         this.updateDataTable(data)
       } catch (error) {
         console.error(error)
@@ -112,6 +122,19 @@ export default {
               createdCell: (td, cellData) => {
                 $(td).text(formatRupiah(cellData))
               }
+            },
+            {
+              data: null,
+              createdCell: (td, rowData) => {
+                const detailButton = $('<button>')
+                  .text('Detail')
+                  .addClass('btn btn-info btn-sm')
+                  .on('click', () => {
+                    this.showDetailModal(rowData)
+                  })
+
+                $(td).empty().append(detailButton)
+              }
             }
           ],
           footerCallback: function (row, data, start, end, display) {
@@ -135,22 +158,44 @@ export default {
         this.table.clear().rows.add(formattedData).draw()
       }
     },
+    async showDetailModal(rowData) {
+      try {
+        const dTrans = await apiClient.get(`transactions-detail/${rowData.id}`)
+        this.selectedTransaction = dTrans.data.data
+        console.log(dTrans.data.data)
+
+        const detailModal = new bootstrap.Modal(document.getElementById('detailModal'))
+        detailModal.show()
+      } catch (error) {
+        console.error('error response : ', error)
+      }
+    },
     formatData(data) {
       const formatted = []
       let no = 1
       data.forEach((transaksi) => {
+        let totalJumlahBarang = 0,
+          totalSubTotal = 0
+
         transaksi.details.forEach((detail) => {
-          formatted.push({
-            no: no++,
-            no_transaksi: transaksi.no_transaksi,
-            tanggal: transaksi.tanggal,
-            nama_customer: transaksi.nama_customer,
-            jumlah_barang: detail.jumlah_barang,
-            subtotal: transaksi.subtotal,
-            diskon: transaksi.diskon,
-            ongkir: transaksi.ongkir,
-            total: detail.total
-          })
+          let JumlahBarang = parseInt(detail.jumlah_barang, 10) || 0
+          let SubTotal = parseFloat(detail.total) || 0
+
+          totalJumlahBarang += JumlahBarang
+          totalSubTotal += SubTotal
+        })
+
+        formatted.push({
+          id: transaksi.id,
+          no: no++,
+          no_transaksi: transaksi.no_transaksi,
+          tanggal: transaksi.tanggal,
+          nama_customer: transaksi.nama_customer,
+          jumlah_barang: totalJumlahBarang,
+          subtotal: totalSubTotal,
+          diskon: transaksi.diskon,
+          ongkir: transaksi.ongkir,
+          total: transaksi.total
         })
       })
 
