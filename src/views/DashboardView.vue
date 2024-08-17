@@ -7,11 +7,7 @@
             <div class="col-sm-7">
               <div class="card-body">
                 <h5 class="card-title text-primary mb-3">Welcome to the Dashboard page ! 🎉</h5>
-                <p class="mb-6">
-                  You have done 72% more sales today.<br />Check your new badge in your profile.
-                </p>
-
-                <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>
+                <p class="mb-6">Have a great day {{ user.name }} !!!</p>
               </div>
             </div>
             <div class="col-sm-5 text-center text-sm-left">
@@ -27,9 +23,10 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 order-1">
+      <!-- Card -->
+      <div class="col-lg-6 col-md-4">
         <div class="row">
-          <div class="col-lg-6 col-md-12 col-6 mb-6">
+          <div class="col-lg-4 col-md-6 col-6 mb-4">
             <div class="card h-100">
               <div class="card-body">
                 <div class="card-title d-flex align-items-start justify-content-between mb-4">
@@ -40,32 +37,47 @@
                       class="rounded"
                     />
                   </div>
-                  <div class="dropdown">
-                    <button
-                      class="btn p-0"
-                      type="button"
-                      id="cardOpt3"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                      <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                    </div>
-                  </div>
                 </div>
-                <p class="mb-1">Profit</p>
-                <h4 class="card-title mb-3">$12,628</h4>
-                <small class="text-success fw-medium"
-                  ><i class="bx bx-up-arrow-alt"></i> +72.80%</small
-                >
+                <p class="mb-1">Barang</p>
+                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_barang }}</h4>
               </div>
             </div>
           </div>
-          <div class="col-lg-6 col-md-12 col-6 mb-6">
+          <div class="col-lg-4 col-md-6 col-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="card-title d-flex align-items-start justify-content-between mb-4">
+                  <div class="avatar flex-shrink-0">
+                    <img
+                      src="/assets/img/icons/unicons/wallet-info.png"
+                      alt="wallet info"
+                      class="rounded"
+                    />
+                  </div>
+                </div>
+                <p class="mb-1">Customer</p>
+                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_customer }}</h4>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="card-title d-flex align-items-start justify-content-between mb-4">
+                  <div class="avatar flex-shrink-0">
+                    <img
+                      src="/assets/img/icons/unicons/wallet-info.png"
+                      alt="wallet info"
+                      class="rounded"
+                    />
+                  </div>
+                </div>
+                <p class="mb-1">Transaksi</p>
+                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_transaksi }}</h4>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-lg-6 col-md-12 col-6 mb-6">
             <div class="card h-100">
               <div class="card-body">
                 <div class="card-title d-flex align-items-start justify-content-between mb-4">
@@ -100,15 +112,48 @@
                 >
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
+      <!-- End Card -->
     </div>
   </div>
 </template>
 
 <script>
+import apiClient from '@/plugins/axios'
+import { mapState } from 'vuex'
+
 export default {
-  name: 'DashboardView'
+  name: 'DashboardView',
+  data() {
+    return {
+      responseData: {
+        cards: {
+          jumlah_barang: 0,
+          jumlah_customer: 0,
+          jumlah_transaksi: 0
+        },
+        statistic: null
+      }
+    }
+  },
+  computed: {
+    ...mapState({
+      user: (state) => state.auth.user
+    })
+  },
+  created() {
+    this.$store.dispatch('fetchUser')
+
+    apiClient
+      .get('/dashboard')
+      .then((response) => {
+        this.responseData = response.data.data
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
 }
 </script>
