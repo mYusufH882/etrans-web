@@ -39,7 +39,7 @@
                   </div>
                 </div>
                 <p class="mb-1">Barang</p>
-                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_barang }}</h4>
+                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_barang || 0 }}</h4>
               </div>
             </div>
           </div>
@@ -56,7 +56,7 @@
                   </div>
                 </div>
                 <p class="mb-1">Customer</p>
-                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_customer }}</h4>
+                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_customer || 0 }}</h4>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
                   </div>
                 </div>
                 <p class="mb-1">Transaksi</p>
-                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_transaksi }}</h4>
+                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_transaksi || 0 }}</h4>
               </div>
             </div>
           </div>
