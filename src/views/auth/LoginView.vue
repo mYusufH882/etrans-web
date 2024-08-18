@@ -38,8 +38,14 @@
                         required
                       />
                     </div>
+
                     <div class="d-grid">
-                      <button type="submit" class="btn btn-primary">Login</button>
+                      <button type="submit" class="btn btn-primary">
+                        <div v-if="loading">
+                          <Loading sizeLoading="sm" colorLoading="primary" />
+                        </div>
+                        Login
+                      </button>
                     </div>
                   </form>
                 </div>
@@ -53,15 +59,20 @@
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue'
 import { mapActions } from 'vuex'
 
 export default {
   name: 'LoginView',
+  components: {
+    Loading
+  },
   data() {
     return {
       email: '',
       password: '',
-      errors: {}
+      errors: {},
+      loading: false
     }
   },
   methods: {
@@ -69,6 +80,7 @@ export default {
     async handleLogin() {
       try {
         this.errors = {}
+        this.loading = true
         await this.login({ email: this.email, password: this.password })
         this.$router.push({ name: 'Dashboard' })
       } catch (error) {
@@ -81,6 +93,8 @@ export default {
         } else {
           return
         }
+      } finally {
+        this.loading = false
       }
     }
   }

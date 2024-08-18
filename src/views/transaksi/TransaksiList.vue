@@ -40,6 +40,10 @@
       </div>
     </div>
 
+    <div v-if="loading" class="loading-overlay d-flex justify-content-center align-items-center">
+      <Loading sizeLoading="lg" colorLoading="secondary" />
+    </div>
+
     <DetailModalTrans :selectedTransaction="selectedTransaction" />
   </div>
 </template>
@@ -52,14 +56,17 @@ import apiClient from '@/plugins/axios'
 import { formatRupiah } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import DetailModalTrans from '@/components/modals/DetailModalTrans.vue'
+import Loading from '@/components/Loading.vue'
 
 export default {
   name: 'TransaksiList',
   components: {
-    DetailModalTrans
+    DetailModalTrans,
+    Loading
   },
   data() {
     return {
+      loading: false,
       table: null,
       selectedTransaction: {}
     }
@@ -160,6 +167,7 @@ export default {
     },
     async showDetailModal(rowData) {
       try {
+        this.loading = true
         const dTrans = await apiClient.get(`transactions-detail/${rowData.id}`)
         this.selectedTransaction = dTrans.data.data
         console.log(dTrans.data.data)
@@ -168,6 +176,8 @@ export default {
         detailModal.show()
       } catch (error) {
         console.error('error response : ', error)
+      } finally {
+        this.loading = false
       }
     },
     formatData(data) {
@@ -204,3 +214,15 @@ export default {
   }
 }
 </script>
+
+<style>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Background semi-transparan */
+  z-index: 1050; /* Pastikan overlay di atas konten lain */
+}
+</style>
