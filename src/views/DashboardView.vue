@@ -7,7 +7,10 @@
             <div class="col-sm-7">
               <div class="card-body">
                 <h5 class="card-title text-primary mb-3">Welcome to the Dashboard page ! 🎉</h5>
-                <p class="mb-6">Have a great day {{ user.name }} !!!</p>
+                <p class="mb-6">
+                  <span v-if="loading"><Loading sizeLoading="sm" colorLoading="secondary" /></span>
+                  <span v-else> Have a great day {{ user.name }} !!! </span>
+                </p>
               </div>
             </div>
             <div class="col-sm-5 text-center text-sm-left">
@@ -39,7 +42,12 @@
                   </div>
                 </div>
                 <p class="mb-1">Barang</p>
-                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_barang || 0 }}</h4>
+                <span v-if="loading">
+                  <Loading sizeLoading="sm" colorLoading="secondary" />
+                </span>
+                <span v-else>
+                  <h4 class="card-title mb-3">{{ responseData.cards.jumlah_barang || 0 }}</h4>
+                </span>
               </div>
             </div>
           </div>
@@ -56,7 +64,12 @@
                   </div>
                 </div>
                 <p class="mb-1">Customer</p>
-                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_customer || 0 }}</h4>
+                <span v-if="loading">
+                  <Loading sizeLoading="sm" colorLoading="secondary" />
+                </span>
+                <span v-else>
+                  <h4 class="card-title mb-3">{{ responseData.cards.jumlah_customer || 0 }}</h4>
+                </span>
               </div>
             </div>
           </div>
@@ -73,7 +86,12 @@
                   </div>
                 </div>
                 <p class="mb-1">Transaksi</p>
-                <h4 class="card-title mb-3">{{ responseData.cards.jumlah_transaksi || 0 }}</h4>
+                <span v-if="loading">
+                  <Loading sizeLoading="sm" colorLoading="secondary" />
+                </span>
+                <span v-else>
+                  <h4 class="card-title mb-3">{{ responseData.cards.jumlah_transaksi || 0 }}</h4>
+                </span>
               </div>
             </div>
           </div>
@@ -121,13 +139,18 @@
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue'
 import apiClient from '@/plugins/axios'
 import { mapState } from 'vuex'
 
 export default {
   name: 'DashboardView',
+  components: {
+    Loading
+  },
   data() {
     return {
+      loading: false,
       responseData: {
         cards: {
           jumlah_barang: 0,
@@ -144,6 +167,8 @@ export default {
     })
   },
   created() {
+    this.loading = true
+
     this.$store.dispatch('fetchUser')
 
     apiClient
@@ -153,6 +178,9 @@ export default {
       })
       .catch((error) => {
         console.error(error)
+      })
+      .finally(() => {
+        this.loading = false
       })
   }
 }
