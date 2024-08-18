@@ -34,6 +34,8 @@
                     <th>Nama Barang</th>
                     <th>Harga Bandrol</th>
                     <th>Harga Diskon</th>
+                    <th>Diskon</th>
+                    <th>Biaya Ongkir</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -43,16 +45,21 @@
                     <td>{{ items.barang.nama }}</td>
                     <td>{{ formatRupiah(items.harga_bandrol) }}</td>
                     <td>{{ formatRupiah(items.harga_diskon) }}</td>
+                    <td>{{ formatRupiah(selectedTransaction.diskon) }}</td>
+                    <td>{{ formatRupiah(selectedTransaction.ongkir) }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <p class="mt-5">
-            Harga Total : (<b> {{ formatRupiah(selectedTransaction.subtotal) }}</b> -
+          <p class="my-5">(Harga Diskon Barang - Diskon) + Biaya Ongkir</p>
+          <!-- <p class="my-5">
+            (<b> {{ formatRupiah(selectedTransaction.subtotal) }}</b> -
             <b>{{ formatRupiah(selectedTransaction.diskon) }}</b
-            >) + <b>{{ formatRupiah(selectedTransaction.ongkir) }}</b> =
-            <b>{{ formatRupiah(selectedTransaction.total_bayar) }}</b>
+            >) + <b>{{ formatRupiah(selectedTransaction.ongkir) }}</b>
+          </p> -->
+          <p class="mt-5">
+            Harga Total : <b>{{ formatRupiah(selectedTransaction.total_bayar) }}</b>
           </p>
         </div>
         <div class="modal-footer">
