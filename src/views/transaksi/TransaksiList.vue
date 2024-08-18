@@ -191,7 +191,7 @@ export default {
           no_transaksi: transaksi.no_transaksi,
           tanggal: transaksi.tanggal,
           nama_customer: transaksi.nama_customer,
-          jumlah_barang: totalJumlahBarang,
+          jumlah_barang: totalJumlahBarang + ' Barang',
           subtotal: totalSubTotal,
           diskon: transaksi.diskon,
           ongkir: transaksi.ongkir,
