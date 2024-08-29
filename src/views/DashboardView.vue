@@ -141,7 +141,7 @@
 <script>
 import Loading from '@/components/Loading.vue'
 import apiClient from '@/plugins/axios'
-import { computed, onUnmounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -171,6 +171,7 @@ export default {
         .get('/dashboard')
         .then((response) => {
           responseData.value = response.data.data
+          console.log(response.data.data)
         })
         .catch((error) => {
           console.error(error)
@@ -180,7 +181,7 @@ export default {
         })
     }
 
-    onUnmounted(() => {
+    onMounted(() => {
       fetchDashboard()
     })
 
