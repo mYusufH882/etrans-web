@@ -57,6 +57,7 @@ import { formatRupiah } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import DetailModalTrans from '@/components/modals/DetailModalTrans.vue'
 import Loading from '@/components/Loading.vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 
 export default {
   name: 'TransaksiList',
@@ -64,112 +65,100 @@ export default {
     DetailModalTrans,
     Loading
   },
-  data() {
-    return {
-      loading: false,
-      table: null,
-      selectedTransaction: {}
-    }
-  },
-  mounted() {
-    this.fetchTransaksi()
-    this.intializeDataTable()
-  },
-  beforeUnmount() {
-    if (this.table) {
-      this.table.destroy()
-    }
-  },
-  methods: {
-    async fetchTransaksi() {
+  setup() {
+    const loading = ref(false)
+    const table = ref(null)
+    const selectedTransaction = ref({})
+
+    const fetchTransaksi = async () => {
       try {
         const response = await apiClient.get('/transactions')
         const data = response.data.data
         console.log(data)
-
-        this.updateDataTable(data)
+        updateDataTable(data)
       } catch (error) {
         console.error(error)
       }
-    },
-    intializeDataTable() {
-      this.$nextTick(() => {
-        this.table = $('#transaksiTable').DataTable({
-          columns: [
-            { data: 'no' },
-            { data: 'no_transaksi' },
-            {
-              data: 'tanggal',
-              createdCell: (td, cellData) => {
-                $(td).text(formatDate(cellData))
-              }
-            },
-            { data: 'nama_customer' },
-            { data: 'jumlah_barang' },
-            {
-              data: 'subtotal',
-              createdCell: (td, cellData) => {
-                $(td).text(formatRupiah(cellData))
-              }
-            },
-            {
-              data: 'diskon',
-              createdCell: (td, cellData) => {
-                $(td).text(formatRupiah(cellData))
-              }
-            },
-            {
-              data: 'ongkir',
-              createdCell: (td, cellData) => {
-                $(td).text(formatRupiah(cellData))
-              }
-            },
-            {
-              data: 'total',
-              createdCell: (td, cellData) => {
-                $(td).text(formatRupiah(cellData))
-              }
-            },
-            {
-              data: null,
-              createdCell: (td, rowData) => {
-                const detailButton = $('<button>')
-                  .text('Detail')
-                  .addClass('btn btn-info btn-sm')
-                  .on('click', () => {
-                    this.showDetailModal(rowData)
-                  })
+    }
 
-                $(td).empty().append(detailButton)
-              }
+    const initializeDataTable = () => {
+      table.value = $('#transaksiTable').DataTable({
+        columns: [
+          { data: 'no' },
+          { data: 'no_transaksi' },
+          {
+            data: 'tanggal',
+            createdCell: (td, cellData) => {
+              $(td).text(formatDate(cellData))
             }
-          ],
-          footerCallback: function (row, data, start, end, display) {
-            let api = this.api()
+          },
+          { data: 'nama_customer' },
+          { data: 'jumlah_barang' },
+          {
+            data: 'subtotal',
+            createdCell: (td, cellData) => {
+              $(td).text(formatRupiah(cellData))
+            }
+          },
+          {
+            data: 'diskon',
+            createdCell: (td, cellData) => {
+              $(td).text(formatRupiah(cellData))
+            }
+          },
+          {
+            data: 'ongkir',
+            createdCell: (td, cellData) => {
+              $(td).text(formatRupiah(cellData))
+            }
+          },
+          {
+            data: 'total',
+            createdCell: (td, cellData) => {
+              $(td).text(formatRupiah(cellData))
+            }
+          },
+          {
+            data: null,
+            createdCell: (td, rowData) => {
+              const detailButton = $('<button>')
+                .text('Detail')
+                .addClass('btn btn-info btn-sm')
+                .on('click', () => {
+                  showDetailModal(rowData)
+                })
 
-            let grandTotal = api
-              .column(8, { page: 'current' })
-              .data()
-              .reduce(function (a, b) {
-                return parseFloat(a) + parseFloat(b)
-              }, 0)
-
-            $(api.column(8).footer()).html(formatRupiah(grandTotal))
+              $(td).empty().append(detailButton)
+            }
           }
-        })
+        ],
+        footerCallback: function (row, data, start, end, display) {
+          let api = this.api()
+
+          let grandTotal = api
+            .column(8, { page: 'current' })
+            .data()
+            .reduce(function (a, b) {
+              return parseFloat(a) + parseFloat(b)
+            }, 0)
+
+          $(api.column(8).footer()).html(formatRupiah(grandTotal))
+        }
       })
-    },
-    updateDataTable(data) {
-      if (this.table) {
-        const formattedData = this.formatData(data)
-        this.table.clear().rows.add(formattedData).draw()
+    }
+
+    const updateDataTable = (data) => {
+      if (table.value) {
+        const formattedData = formatData(data)
+        table.value.clear().rows.add(formattedData).draw()
       }
-    },
-    async showDetailModal(rowData) {
+    }
+
+    const showDetailModal = async (rowData) => {
       try {
-        this.loading = true
+        loading.value = true
         const dTrans = await apiClient.get(`transactions-detail/${rowData.id}`)
-        this.selectedTransaction = dTrans.data.data
+        selectedTransaction.value = dTrans.data.data
         console.log(dTrans.data.data)
 
         const detailModal = new bootstrap.Modal(document.getElementById('detailModal'))
@@ -177,10 +166,11 @@ export default {
       } catch (error) {
         console.error('error response : ', error)
       } finally {
-        this.loading = false
+        loading.value = false
       }
-    },
-    formatData(data) {
+    }
+
+    const formatData = (data) => {
       const formatted = []
       let no = 1
       data.forEach((transaksi) => {
@@ -210,6 +200,24 @@ export default {
       })
 
       return formatted
+    }
+
+    onMounted(() => {
+      fetchTransaksi()
+      initializeDataTable()
+    })
+
+    onBeforeMount(() => {
+      if (table.value) {
+        table.value.destroy()
+      }
+    })
+
+    return {
+      loading,
+      table,
+      selectedTransaction,
+      showDetailModal
     }
   }
 }

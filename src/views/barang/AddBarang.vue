@@ -10,41 +10,51 @@
 <script>
 import BarangForm from '@/components/forms/BarangForm.vue'
 import apiClient from '@/plugins/axios'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'AddBarang',
   components: {
     BarangForm
   },
-  data() {
-    return {
+  setup() {
+    const router = useRouter()
+    const barang = reactive({
       barang: {
         kode: '',
         nama: '',
         harga: 0
-      },
-      errors: {},
-      isSubmitting: false
-    }
-  },
-  methods: {
-    async handleSubmit(barangData) {
-      if (this.isSubmitting) return
-      this.isSubmitting = true
+      }
+    })
+    const errors = ref({})
+    const isSubmitting = ref(false)
+
+    const handleSubmit = async (barangData) => {
+      if (isSubmitting.value) return
+      isSubmitting.value = true
 
       try {
         const response = await apiClient.post('/barang', barangData)
-        if (response) console.log('Barang berhasil ditambahkan:', response.data.data)
-        this.$router.push({ name: 'Barang' })
+        if (response) {
+          router.push({ name: 'Barang' })
+        }
       } catch (error) {
-        if (error.response.status == 422) {
-          this.errors = error.response.data.error || {}
+        if (error) {
+          errors.value = error.response.data.error || {}
         } else {
-          console.error('Error : ', error.response.data.message)
+          console.error(error)
         }
       } finally {
-        this.isSubmitting = false // Reset flag
+        isSubmitting.value = false
       }
+    }
+
+    return {
+      barang,
+      errors,
+      isSubmitting,
+      handleSubmit
     }
   }
 }

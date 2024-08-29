@@ -67,6 +67,7 @@
 
 <script>
 import { formatPhoneNumber, parsePhoneNumber } from '@/utils/phoneHelper'
+import { computed, toRefs } from 'vue'
 
 export default {
   name: 'CustomerForm',
@@ -84,20 +85,28 @@ export default {
       default: () => ({})
     }
   },
-  computed: {
-    formattedTelp: {
+  setup(props, { emit }) {
+    const { form, isEdit, errors } = toRefs(props)
+
+    const formattedTelp = computed({
       get() {
-        return formatPhoneNumber(this.form.telp)
+        return formatPhoneNumber(form.value.telp)
       },
       set(value) {
-        this.form.telp = parsePhoneNumber(value)
+        form.value.telp = parsePhoneNumber(value)
       }
+    })
+
+    const submitForm = () => {
+      const parsedPhone = parsePhoneNumber(form.value.telp)
+      emit('submit', { ...form.value, parsedPhone })
     }
-  },
-  methods: {
-    submitForm() {
-      const parsedPhone = parsePhoneNumber(this.form.telp)
-      this.$emit('submit', { ...this.form, parsedPhone })
+
+    return {
+      form,
+      isEdit,
+      formattedTelp,
+      submitForm
     }
   }
 }

@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { computed } from 'vue'
+
 export default {
   name: 'Loading',
   props: {
@@ -16,12 +18,18 @@ export default {
       type: String
     }
   },
-  computed: {
-    sizeLoadingClass() {
-      return `spinner-border-${this.sizeLoading}`
-    },
-    colorLoadingClass() {
-      return `text-${this.colorLoading}`
+  setup({ sizeLoading, colorLoading }) {
+    const sizeLoadingClass = computed(() => {
+      return `spinner-border-${sizeLoading}`
+    })
+
+    const colorLoadingClass = computed(() => {
+      return `text-${colorLoading}`
+    })
+
+    return {
+      sizeLoadingClass,
+      colorLoadingClass
     }
   }
 }

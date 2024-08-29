@@ -7,6 +7,7 @@
             <h5 class="mb">Edit Barang</h5>
           </div>
           <div class="card-body">
+            <!-- Pastikan komponen BarangForm menerima props dan event yang benar -->
             <BarangForm :isEdit="true" :form="form" @submit="updateBarang" :errors="errors" />
           </div>
         </div>
@@ -18,47 +19,60 @@
 <script>
 import BarangForm from '@/components/forms/BarangForm.vue'
 import apiClient from '@/plugins/axios'
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
   name: 'EditBarang',
   components: {
     BarangForm
   },
-  data() {
-    return {
-      form: {
-        kode: '',
-        nama: '',
-        harga: 0
-      },
-      errors: {}
-    }
-  },
-  async mounted() {
-    const id = this.$route.params.id
-    await this.fetchBarang(id)
-  },
-  methods: {
-    async fetchBarang(id) {
+  setup() {
+    const route = useRoute()
+    const router = useRouter()
+    const form = reactive({
+      kode: '',
+      nama: '',
+      harga: 0
+    })
+    const errors = ref({})
+
+    const fetchBarang = async (id) => {
       try {
         const response = await apiClient.get(`/barang/${id}`)
-        this.form = response.data.data
+        const barangData = response.data.data
+
+        form.kode = barangData.kode
+        form.nama = barangData.nama
+        form.harga = barangData.harga
       } catch (error) {
         console.error(error)
       }
-    },
-    async updateBarang() {
+    }
+
+    const updateBarang = async () => {
       try {
-        const id = this.$route.params.id
-        await apiClient.put(`/barang/${id}`, this.form)
-        this.$router.push({ name: 'Barang' })
+        const id = route.params.id
+        await apiClient.put(`/barang/${id}`, form)
+        router.push({ name: 'Barang' })
       } catch (error) {
-        if (error.response.status == 422) {
-          this.errors = error.response.data.error || {}
+        if (error.response && error.response.status === 422) {
+          errors.value = error.response.data.error || {}
         } else {
           console.error(error)
         }
       }
+    }
+
+    onMounted(() => {
+      const id = route.params.id
+      fetchBarang(id)
+    })
+
+    return {
+      form,
+      errors,
+      updateBarang
     }
   }
 }

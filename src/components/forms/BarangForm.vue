@@ -66,6 +66,7 @@
 
 <script>
 import { formatRupiah, parseRupiah } from '@/utils/currency'
+import { computed, toRefs } from 'vue'
 
 export default {
   name: 'BarangForm',
@@ -83,19 +84,28 @@ export default {
       default: () => ({})
     }
   },
-  computed: {
-    formattedHarga: {
+  setup(props, { emit }) {
+    const { form, isEdit, errors } = toRefs(props)
+
+    const formattedHarga = computed({
       get() {
-        return formatRupiah(this.form.harga)
+        return formatRupiah(form.value.harga)
       },
       set(value) {
-        this.form.harga = parseRupiah(value)
+        form.value.harga = parseRupiah(value)
       }
+    })
+
+    const submitForm = () => {
+      emit('submit', { ...form.value })
     }
-  },
-  methods: {
-    submitForm() {
-      this.$emit('submit', { ...this.form })
+
+    return {
+      form,
+      isEdit,
+      errors,
+      formattedHarga,
+      submitForm
     }
   }
 }

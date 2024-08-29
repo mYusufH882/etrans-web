@@ -10,41 +10,51 @@
 <script>
 import CustomerForm from '@/components/forms/CustomerForm.vue'
 import apiClient from '@/plugins/axios'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'AddCustomer',
   components: {
     CustomerForm
   },
-  data() {
-    return {
+  setup() {
+    const router = useRouter()
+    const customer = reactive({
       customer: {
         kode: '',
         name: '',
         telp: ''
-      },
-      errors: {},
-      isSubmitting: false
-    }
-  },
-  methods: {
-    async handleSubmit(customerData) {
-      if (this.isSubmitting) return
-      this.isSubmitting = true
+      }
+    })
+    const errors = ref({})
+    const isSubmitting = ref(false)
+
+    const handleSubmit = async (customerData) => {
+      if (isSubmitting.value) return
+      isSubmitting.value = true
 
       try {
         const response = await apiClient.post('/customer', customerData)
-        console.log('Barang berhasil ditambahkan:', response.data.data)
-        this.$router.push({ name: 'Customer' })
+        if (response) {
+          router.push({ name: 'Customer' })
+        }
       } catch (error) {
-        if (error.response.status == 422) {
-          this.errors = error.response.data.error || {}
+        if (error) {
+          errors.value = error.response.data.error || {}
         } else {
-          console.error('Create Customer Error:', error)
+          console.error(error)
         }
       } finally {
-        this.isSubmitting = false
+        isSubmitting.value = false
       }
+    }
+
+    return {
+      customer,
+      errors,
+      isSubmitting,
+      handleSubmit
     }
   }
 }
