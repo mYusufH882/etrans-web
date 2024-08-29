@@ -134,6 +134,47 @@
         </div>
       </div>
       <!-- End Card -->
+      <!-- Graphic Statistic -->
+      <div class="row">
+        <div class="col-md col-lg order-1 mb-6">
+          <div class="card h-100">
+            <div class="card-header nav-align-top">Statistik</div>
+            <div class="card-body">
+              <div class="tab-content p-0">
+                <div
+                  class="tab-pane fade show active"
+                  id="navs-tabs-line-card-income"
+                  role="tabpanel"
+                >
+                  <div class="d-flex mb-6">
+                    <div class="avatar flex-shrink-0 me-3">
+                      <img
+                        src="/assets/img/icons/unicons/wallet-info.png"
+                        alt="wallet info"
+                        class="rounded"
+                      />
+                    </div>
+                    <div>
+                      <p class="mb-0">Total Balance</p>
+                      <div class="d-flex align-items-center">
+                        <h6 class="mb-0 me-1">
+                          {{ formatRupiah(responseData.total_balance) || 0 }}
+                        </h6>
+                        <small class="text-success fw-medium">
+                          <i class="bx bx-chevron-up bx-lg"></i>
+                          {{ growthRate }}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="incomeChart"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Graphic Statistic -->
     </div>
   </div>
 </template>
@@ -141,6 +182,7 @@
 <script>
 import Loading from '@/components/Loading.vue'
 import apiClient from '@/plugins/axios'
+import { formatRupiah } from '@/utils/currency'
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 
@@ -159,7 +201,8 @@ export default {
         jumlah_customer: 0,
         jumlah_transaksi: 0
       },
-      statistic: null
+      statistic: [],
+      total_balance: 0
     })
 
     const user = computed(() => store.state.auth.user)
@@ -172,6 +215,7 @@ export default {
         .then((response) => {
           responseData.value = response.data.data
           console.log(response.data.data)
+          renderChart()
         })
         .catch((error) => {
           console.error(error)
@@ -181,6 +225,47 @@ export default {
         })
     }
 
+    const renderChart = () => {
+      if (!window.ApexCharts) return
+
+      const currentYear = new Date().getFullYear()
+
+      const options = {
+        chart: {
+          id: 'line-chart',
+          toolbar: {
+            show: false
+          }
+        },
+        xaxis: {
+          categories: responseData.value.statistic.map((item) => {
+            return new Date(`${currentYear}-${item.month}-01`).toLocaleString('default', {
+              month: 'short'
+            })
+          })
+        },
+        yaxis: {
+          labels: {
+            formatter: (value) => `${value.toLocaleString()}`
+          }
+        },
+        title: {
+          text: 'Monthly Sales',
+          align: 'left'
+        },
+        colors: ['#FF4560']
+      }
+
+      const series = [
+        {
+          name: 'Total Sales',
+          data: responseData.value.statistic.map((item) => parseFloat(item.price_month))
+        }
+      ]
+
+      new window.ApexCharts(document.querySelector('#incomeChart'), { ...options, series }).render()
+    }
+
     onMounted(() => {
       fetchDashboard()
     })
@@ -188,7 +273,15 @@ export default {
     return {
       loading,
       responseData,
-      user
+      user,
+      formatRupiah,
+      growthRate: computed(() => {
+        const stats = responseData.value.statistic
+        if (stats.length < 2) return 0
+        const latest = parseFloat(stats[stats.length - 1].price_month) || 0
+        const previous = parseFloat(stats[stats.length - 2].price_month) || 0
+        return previous ? (((latest - previous) / previous) * 100).toFixed(1) : 0
+      })
     }
   }
 }
