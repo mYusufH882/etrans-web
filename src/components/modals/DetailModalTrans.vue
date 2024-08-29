@@ -81,9 +81,11 @@ export default {
       required: true
     }
   },
-  methods: {
-    formatRupiah(value) {
-      return formatRupiah(value)
+  setup(props) {
+    const formatRupiahMethod = (value) => formatRupiah(value)
+
+    return {
+      formatRupiah: formatRupiahMethod
     }
   }
 }

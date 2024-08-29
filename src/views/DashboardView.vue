@@ -141,47 +141,55 @@
 <script>
 import Loading from '@/components/Loading.vue'
 import apiClient from '@/plugins/axios'
-import { mapState } from 'vuex'
+import { computed, onMounted, ref } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'DashboardView',
   components: {
     Loading
   },
-  data() {
-    return {
-      loading: false,
-      responseData: {
-        cards: {
-          jumlah_barang: 0,
-          jumlah_customer: 0,
-          jumlah_transaksi: 0
-        },
-        statistic: null
-      }
-    }
-  },
-  computed: {
-    ...mapState({
-      user: (state) => state.auth.user
+  setup() {
+    const store = useStore()
+
+    const loading = ref(false)
+    const responseData = ref({
+      cards: {
+        jumlah_barang: 0,
+        jumlah_customer: 0,
+        jumlah_transaksi: 0
+      },
+      statistic: null
     })
-  },
-  created() {
-    this.loading = true
 
-    this.$store.dispatch('fetchUser')
+    const user = computed(() => store.state.auth.user)
 
-    apiClient
-      .get('/dashboard')
-      .then((response) => {
-        this.responseData = response.data.data
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-      .finally(() => {
-        this.loading = false
-      })
+    const fetchDashboard = () => {
+      loading.value = true
+
+      apiClient
+        .get('/dashboard')
+        .then((response) => {
+          responseData.value = response.data.data
+          console.log(response.data.data)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+        .finally(() => {
+          loading.value = false
+        })
+    }
+
+    onMounted(() => {
+      fetchDashboard()
+    })
+
+    return {
+      loading,
+      responseData,
+      user
+    }
   }
 }
 </script>

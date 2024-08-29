@@ -39,92 +39,104 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'
 import DeleteModal from '@/components/modals/DeleteModal.vue'
 import apiClient from '@/plugins/axios'
 import { formatPhoneNumber } from '@/utils/phoneHelper'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'CustomerList',
   components: {
     DeleteModal
   },
-  data() {
-    return {
-      table: null
-    }
-  },
-  mounted() {
-    this.initializeDataTable()
-    this.fetchCustomer()
-  },
-  beforeUnmount() {
-    if (this.table) {
-      this.table.destroy()
-    }
-  },
-  methods: {
-    async fetchCustomer() {
+  setup() {
+    const router = useRouter()
+    const table = ref(null)
+    const customerToDelete = ref(null)
+
+    const fetchCustomer = async () => {
       try {
-        const response = await apiClient.get('/customer')
-        const data = response.data.data.map((item) => ({
+        const response = apiClient.get('/customer')
+        const data = (await response).data.data.map((item) => ({
           ...item,
           telp: formatPhoneNumber(item.telp)
         }))
-        console.log(data)
 
-        this.updateDataTable(data)
+        updateDataTable(data)
       } catch (error) {
         console.error(error)
       }
-    },
-    initializeDataTable() {
-      this.$nextTick(() => {
-        this.table = $('#customerTable').DataTable({
-          columns: [
-            { data: 'kode' },
-            { data: 'name' },
-            { data: 'telp' },
-            {
-              data: null,
-              render: (data) => `
-                <button class="btn btn-warning btn-sm edit-btn" data-id="${data.id}">Edit</button>
-                <button class="btn btn-danger delete-btn btn-sm" data-id="${data.id}">Delete</button>
+    }
+
+    const initializeDataTable = () => {
+      table.value = $('#customerTable').DataTable({
+        columns: [
+          { data: 'kode' },
+          { data: 'name' },
+          { data: 'telp' },
+          {
+            data: null,
+            render: (data) =>
               `
-            }
-          ]
-        })
+              <button class="btn btn-warning btn-sm edit-btn" data-id="${data.id}">Edit</button>
+              <button class="btn btn-danger delete-btn btn-sm" data-id="${data.id}">Delete</button>
+            `
+          }
+        ]
       })
 
       $('#customerTable').on('click', '.edit-btn', (event) => {
         const id = $(event.currentTarget).data('id')
-        this.editCustomer(id)
+        editCustomer(id)
       })
 
       $('#customerTable').on('click', '.delete-btn', (event) => {
         const id = $(event.currentTarget).data('id')
-        this.showDeleteModal(id)
+        showDeleteModal(id)
       })
-    },
-    updateDataTable(data) {
-      if (this.table) {
-        this.table.clear().rows.add(data).draw()
+    }
+
+    const updateDataTable = (data) => {
+      if (table.value) {
+        table.value.clear().rows.add(data).draw()
       }
-    },
-    showDeleteModal(id) {
-      this.customerToDelete = id
+    }
+
+    const showDeleteModal = (id) => {
+      customerToDelete.value = id
       const deleteModal = new bootstrap.Modal($('#deleteModal'))
       deleteModal.show()
-    },
-    async confirmDelete() {
+    }
+
+    const confirmDelete = async () => {
       try {
-        await apiClient.delete(`/customer/${this.customerToDelete}`)
-        this.customerToDelete = null
+        await apiClient.delete(`/customer/${customerToDelete.value}`)
+        customerToDelete.value = null
         const deleteModal = bootstrap.Modal.getInstance($('#deleteModal'))
         deleteModal.hide()
-        this.fetchCustomer()
+        fetchCustomer()
       } catch (error) {
         console.error(error)
       }
-    },
-    editCustomer(id) {
-      this.$router.push({ name: 'EditCustomer', params: { id } })
+    }
+
+    const editCustomer = (id) => {
+      router.push({ name: 'EditCustomer', params: { id } })
+    }
+
+    onMounted(() => {
+      initializeDataTable()
+      fetchCustomer()
+    })
+
+    onBeforeUnmount(() => {
+      if (table.value) {
+        table.value.destroy()
+      }
+    })
+
+    return {
+      confirmDelete,
+      showDeleteModal,
+      customerToDelete
     }
   }
 }

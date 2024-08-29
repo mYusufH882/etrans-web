@@ -39,90 +39,105 @@ import 'datatables.net'
 import 'datatables.net-dt/css/dataTables.dataTables.css'
 import DeleteModal from '@/components/modals/DeleteModal.vue'
 import { formatRupiah } from '@/utils/currency'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'BarangList',
   components: {
     DeleteModal
   },
-  data() {
-    return {
-      table: null
-    }
-  },
-  mounted() {
-    this.initializeDataTable()
-    this.fetchBarang()
-  },
-  beforeUnmount() {
-    if (this.table) {
-      this.table.destroy()
-    }
-  },
-  methods: {
-    async fetchBarang() {
+  setup() {
+    const router = useRouter()
+    const table = ref(null)
+    const barangToDelete = ref(null)
+
+    const fetchBarang = async () => {
       try {
         const response = await apiClient.get('/barang')
         const data = response.data.data.map((item) => ({
           ...item,
           harga: formatRupiah(item.harga)
         }))
-        this.updateDataTable(data)
+
+        updateDataTable(data)
       } catch (error) {
-        console.error('Error fetching barang:', error)
+        console.error(error)
       }
-    },
-    initializeDataTable() {
-      this.$nextTick(() => {
-        this.table = $('#barangTable').DataTable({
-          columns: [
-            { data: 'kode' },
-            { data: 'nama' },
-            { data: 'harga' },
-            {
-              data: null,
-              render: (data) => `
-                <button class="btn btn-warning btn-sm edit-btn" data-id="${data.id}">Edit</button>
-                <button class="btn btn-danger delete-btn btn-sm" data-id="${data.id}">Delete</button>
-              `
-            }
-          ]
-        })
+    }
+
+    const initializeDataTable = () => {
+      table.value = $('#barangTable').DataTable({
+        columns: [
+          { data: 'kode' },
+          { data: 'nama' },
+          { data: 'harga' },
+          {
+            data: null,
+            render: (data) => `
+              <button class="btn btn-warning btn-sm edit-btn" data-id="${data.id}">Edit</button>
+              <button class="btn btn-danger delete-btn btn-sm" data-id="${data.id}">Delete</button>
+            `
+          }
+        ]
       })
 
       $('#barangTable').on('click', '.edit-btn', (event) => {
         const id = $(event.currentTarget).data('id')
-        this.editBarang(id)
+        editBarang(id)
       })
 
       $('#barangTable').on('click', '.delete-btn', (event) => {
         const id = $(event.currentTarget).data('id')
-        this.showDeleteModal(id)
+        showDeleteModal(id)
       })
-    },
-    updateDataTable(data) {
-      if (this.table) {
-        this.table.clear().rows.add(data).draw()
+    }
+
+    const updateDataTable = (data) => {
+      if (table.value) {
+        table.value.clear().rows.add(data).draw()
       }
-    },
-    showDeleteModal(id) {
-      this.barangToDelete = id
+    }
+
+    const showDeleteModal = (id) => {
+      barangToDelete.value = id
       const deleteModal = new bootstrap.Modal($('#deleteModal'))
       deleteModal.show()
-    },
-    async confirmDelete() {
+    }
+
+    const confirmDelete = async () => {
       try {
-        await apiClient.delete(`/barang/${this.barangToDelete}`)
-        this.barangToDelete = null
+        await apiClient.delete(`/barang/${barangToDelete.value}`)
+        barangToDelete.value = null
         const deleteModal = bootstrap.Modal.getInstance($('#deleteModal'))
         deleteModal.hide()
-        this.fetchBarang()
+        fetchBarang()
       } catch (error) {
         console.error('Error deleting barang:', error)
       }
-    },
-    editBarang(id) {
-      this.$router.push({ name: 'EditBarang', params: { id } })
+    }
+
+    const editBarang = (id) => {
+      router.push({ name: 'EditBarang', params: { id } })
+    }
+
+    onMounted(() => {
+      initializeDataTable()
+      fetchBarang()
+    })
+
+    onBeforeUnmount(() => {
+      if (table.value) {
+        table.value.destroy()
+      }
+    })
+
+    return {
+      table,
+      barangToDelete,
+      showDeleteModal,
+      confirmDelete,
+      editBarang
     }
   }
 }

@@ -10,48 +10,60 @@
 <script>
 import CustomerForm from '@/components/forms/CustomerForm.vue'
 import apiClient from '@/plugins/axios'
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
   name: 'EditCustomer',
   components: {
     CustomerForm
   },
-  data() {
-    return {
-      form: {
-        kode: '',
-        name: '',
-        telp: ''
-      },
-      errors: {}
-    }
-  },
-  async mounted() {
-    const id = this.$route.params.id
-    await this.fetchCustomer(id)
-  },
-  methods: {
-    async fetchCustomer(id) {
+  setup() {
+    const route = useRoute()
+    const router = useRouter()
+    const form = reactive({
+      kode: '',
+      name: '',
+      telp: ''
+    })
+    const errors = ref({})
+
+    const fetchCustomer = async (id) => {
       try {
         const response = await apiClient.get(`/customer/${id}`)
-        console.log(response.data.data)
-        this.form = response.data.data
+        const customerData = response.data.data
+
+        form.kode = customerData.kode
+        form.name = customerData.name
+        form.telp = customerData.telp
       } catch (error) {
         console.error(error)
       }
-    },
-    async updateCustomer() {
+    }
+
+    const updateCustomer = async () => {
       try {
-        const id = this.$route.params.id
-        await apiClient.put(`/customer/${id}`, this.form)
-        this.$router.push({ name: 'Customer' })
+        const id = route.params.id
+        await apiClient.put(`/customer/${id}`, form)
+        router.push({ name: 'Customer' })
       } catch (error) {
-        if (error.response.status == 422) {
-          this.errors = error.response.data.error || {}
+        if (error.response && error.response.status === 422) {
+          errors.value = error.response.data.error || {}
         } else {
           console.error(error)
         }
       }
+    }
+
+    onMounted(() => {
+      const id = route.params.id
+      fetchCustomer(id)
+    })
+
+    return {
+      form,
+      errors,
+      updateCustomer
     }
   }
 }

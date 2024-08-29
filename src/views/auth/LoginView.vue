@@ -40,9 +40,9 @@
                     </div>
 
                     <div class="d-grid">
-                      <button type="submit" class="btn btn-primary">
+                      <button type="submit" class="btn btn-primary" :disabled="loading">
                         <div v-if="loading">
-                          <Loading sizeLoading="sm" colorLoading="primary" />
+                          <Loading sizeLoading="sm" colorLoading="danger" />
                         </div>
                         Login
                       </button>
@@ -60,42 +60,48 @@
 
 <script>
 import Loading from '@/components/Loading.vue'
-import { mapActions } from 'vuex'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'LoginView',
   components: {
     Loading
   },
-  data() {
-    return {
-      email: '',
-      password: '',
-      errors: {},
-      loading: false
-    }
-  },
-  methods: {
-    ...mapActions(['login']),
-    async handleLogin() {
+  setup() {
+    const router = useRouter()
+    const email = ref('')
+    const password = ref('')
+    const errors = ref({})
+    const loading = ref(false)
+    const store = useStore()
+
+    const handleLogin = async () => {
       try {
-        this.errors = {}
-        this.loading = true
-        await this.login({ email: this.email, password: this.password })
-        this.$router.push({ name: 'Dashboard' })
+        errors.value = {}
+        loading.value = true
+        await store.dispatch('login', { email: email.value, password: password.value })
+        router.push({ name: 'Dashboard' })
       } catch (error) {
         if (error.isAxiosError) {
-          if (error.response.status === 422) {
-            this.errors = error.response.data.message
-          } else if (error.response.status === 401) {
-            this.errors.general = 'Email atau password tidak valid.'
+          if (error.response && error.response.status === 422) {
+            errors.value = error.response.data.message
+          } else if (error.response && error.response.status === 401) {
+            errors.value.general = 'Email atau password tidak valid.'
           }
-        } else {
-          return
         }
       } finally {
-        this.loading = false
+        loading.value = false
       }
+    }
+
+    return {
+      email,
+      password,
+      errors,
+      loading,
+      handleLogin
     }
   }
 }

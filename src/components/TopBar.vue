@@ -67,23 +67,26 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'TopBar',
-  computed: {
-    ...mapState({
-      user: (state) => state.auth.user
+  setup() {
+    const store = useStore()
+    const user = computed(() => store.state.auth.user)
+
+    const handleLogout = () => {
+      store.dispatch('logout')
+    }
+
+    onMounted(() => {
+      store.dispatch('fetchUser')
     })
-  },
-  created() {
-    // console.log(this.user.name)
-    this.$store.dispatch('fetchUser')
-  },
-  methods: {
-    ...mapActions(['logout']),
-    handleLogout() {
-      this.logout() // Panggil metode logout dari store
+
+    return {
+      user,
+      handleLogout
     }
   }
 }
